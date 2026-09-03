@@ -1,26 +1,274 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --font-serif: var(--font-cormorant), Georgia, serif;
+    --font-sans: var(--font-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+    /* ===== DARK THEME (default) ===== */
+    --bg-primary: #0D0D0D;
+    --bg-secondary: #080808;
+    --bg-card: #141414;
+    --bg-card-hover: #1A1A1A;
+    --bg-section: #0A0A0A;
+    --bg-input: rgba(255, 255, 255, 0.05);
+    --bg-input-focus: rgba(255, 255, 255, 0.08);
+
+    --text-primary: #FAF8F6;
+    --text-secondary: rgba(250, 248, 246, 0.80);
+    --text-muted: rgba(250, 248, 246, 0.60);
+    --text-faint: rgba(250, 248, 246, 0.40);
+
+    --accent-blush: #E8C8CC;
+    --accent-rose: #C9919A;
+    --accent-gold: #C5A880;
+    --accent-gold-light: #E6D2B5;
+
+    --border: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(255, 255, 255, 0.20);
+    --border-accent: rgba(232, 200, 204, 0.30);
+
+    --glass-bg: rgba(13, 13, 13, 0.75);
+    --glass-bg-solid: rgba(13, 13, 13, 0.98);
+    --glass-border: rgba(232, 200, 204, 0.12);
+
+    --overlay-from: rgba(13, 13, 13, 0.20);
+    --overlay-via: rgba(13, 13, 13, 0.60);
+    --overlay-to: rgba(13, 13, 13, 0.95);
+
+    --shadow-color: rgba(0, 0, 0, 0.50);
+    --shadow-accent: rgba(232, 200, 204, 0.20);
+
+    --scrollbar-track: #0D0D0D;
+    --scrollbar-thumb: rgba(232, 200, 204, 0.25);
+    --scrollbar-thumb-hover: rgba(232, 200, 204, 0.45);
+
+    --whatsapp: #25D366;
+    --selection-bg: #C9919A;
+    --selection-text: #0D0D0D;
+
+    --badge-bg: rgba(201, 145, 154, 0.15);
+    --badge-border: rgba(201, 145, 154, 0.30);
+
+    --card-gradient-from: #1A1416;
+    --card-gradient-to: #141414;
+
+    --logo-filter: none;
+  }
+
+  /* ===== LIGHT THEME ===== */
+  [data-theme="light"] {
+    --bg-primary: #FDFBF9;
+    --bg-secondary: #F5F0EC;
+    --bg-card: #FFFFFF;
+    --bg-card-hover: #F8F4F0;
+    --bg-section: #F9F5F2;
+    --bg-input: rgba(0, 0, 0, 0.03);
+    --bg-input-focus: rgba(0, 0, 0, 0.05);
+
+    --text-primary: #1A1A1A;
+    --text-secondary: rgba(26, 26, 26, 0.80);
+    --text-muted: rgba(26, 26, 26, 0.55);
+    --text-faint: rgba(26, 26, 26, 0.35);
+
+    --accent-blush: #D4A0A7;
+    --accent-rose: #B87A83;
+    --accent-gold: #B8996E;
+    --accent-gold-light: #D4BA93;
+
+    --border: rgba(0, 0, 0, 0.08);
+    --border-hover: rgba(0, 0, 0, 0.18);
+    --border-accent: rgba(184, 122, 131, 0.30);
+
+    --glass-bg: rgba(253, 251, 249, 0.85);
+    --glass-bg-solid: rgba(253, 251, 249, 0.98);
+    --glass-border: rgba(184, 122, 131, 0.15);
+
+    --overlay-from: rgba(253, 251, 249, 0.10);
+    --overlay-via: rgba(253, 251, 249, 0.40);
+    --overlay-to: rgba(253, 251, 249, 0.90);
+
+    --shadow-color: rgba(0, 0, 0, 0.08);
+    --shadow-accent: rgba(184, 122, 131, 0.15);
+
+    --scrollbar-track: #F5F0EC;
+    --scrollbar-thumb: rgba(184, 122, 131, 0.30);
+    --scrollbar-thumb-hover: rgba(184, 122, 131, 0.50);
+
+    --selection-bg: #D4A0A7;
+    --selection-text: #FFFFFF;
+
+    --badge-bg: rgba(184, 122, 131, 0.12);
+    --badge-border: rgba(184, 122, 131, 0.25);
+
+    --card-gradient-from: #F5EEED;
+    --card-gradient-to: #FFFFFF;
+
+    --logo-filter: none;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  ::selection {
+    background-color: var(--selection-bg);
+    color: var(--selection-text);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Custom Editorial Typography Classes */
+.font-editorial {
+  font-family: var(--font-serif);
+}
+
+.font-body {
+  font-family: var(--font-sans);
+}
+
+/* Luxury Glassmorphism & Borders */
+.glass-nav {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.glass-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  border-color: var(--border-accent);
+  transform: translateY(-4px);
+}
+
+.editorial-border {
+  border-color: var(--border);
+}
+
+.gold-glow {
+  box-shadow: 0 0 35px -5px rgba(197, 168, 128, 0.25);
+}
+
+.blush-glow {
+  box-shadow: 0 0 40px -8px var(--shadow-accent);
+}
+
+/* Elegant Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* Subtle Shimmer Animation */
+@keyframes luxuryShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, var(--accent-blush)/15 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: luxuryShimmer 4s infinite;
+}
+
+/* Theme transition */
+* {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 0s;
+}
+
+html.theme-transitioning * {
+  transition-duration: 0.3s !important;
+  transition-timing-function: ease !important;
+}
+
+/* Theme Logo Visibility */
+.dark-logo {
+  display: block;
+}
+.light-logo {
+  display: none;
+}
+
+[data-theme="light"] .dark-logo {
+  display: none !important;
+}
+[data-theme="light"] .light-logo {
+  display: block !important;
+}
+
+/* Luxury Keyframe Animations */
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes pulseSlow {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(1.08); }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-float {
+  animation: floatSlow 4s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulseSlow 6s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
 }
