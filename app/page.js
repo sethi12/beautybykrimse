@@ -262,18 +262,38 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Image of Krimse working with a bride (Full Uncropped Image) */}
             <div className="lg:col-span-6">
-              <div className="relative aspect-[3/2] w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-[var(--border)] shadow-xl group bg-[var(--bg-input)]">
+              <div className="relative aspect-square sm:aspect-[4/5] lg:aspect-square w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-[var(--border)] shadow-xl group bg-[#0B0B0B] flex items-center justify-center">
+                {/* Ambient blurred glow backdrop */}
+                <div className="absolute inset-0 overflow-hidden opacity-30 filter blur-2xl scale-125 pointer-events-none">
+                  <Image
+                    src={meetKrimse.image}
+                    alt=""
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover"
+                    aria-hidden="true"
+                  />
+                </div>
+
+                {/* Main Full Uncropped Image */}
                 <Image
                   src={meetKrimse.image}
                   alt="Krimse working with a bride"
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="object-contain p-2 z-10 transition-transform duration-700 group-hover:scale-[1.02]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
-                <div className="absolute bottom-4 left-4 right-4 p-3 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 text-center">
+
+                {/* Subtle Bottom Gradient */}
+                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/80 via-black/30 to-transparent z-20 pointer-events-none" />
+
+                {/* Info Badge */}
+                <div className="absolute bottom-4 left-4 right-4 p-3 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 z-20 flex items-center justify-between">
                   <span className="text-[10px] uppercase tracking-[0.2em] text-[#E8C8CC] font-medium">
                     Artistry in Motion
+                  </span>
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-[var(--text-muted)] font-medium">
+                    Beauty By Krimse
                   </span>
                 </div>
               </div>

@@ -26,23 +26,45 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Portrait / Working Image (Full Uncropped Image) */}
           <div className="lg:col-span-6">
-            <div className="relative aspect-[3/2] w-full rounded-3xl overflow-hidden border border-[var(--border)] shadow-2xl bg-[var(--bg-card)] group">
+            <div className="relative aspect-square sm:aspect-[4/5] lg:aspect-square w-full rounded-3xl overflow-hidden border border-[var(--border)] shadow-2xl bg-[#0B0B0B] group flex items-center justify-center">
+              {/* Ambient blurred glow backdrop */}
+              <div className="absolute inset-0 overflow-hidden opacity-30 filter blur-2xl scale-125 pointer-events-none">
+                <Image
+                  src="/rimages/about.jpg"
+                  alt=""
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover"
+                  aria-hidden="true"
+                />
+              </div>
+
+              {/* Main Full Uncropped Image */}
               <Image
-                src={meetKrimse.image}
+                src="/rimages/about.jpg"
                 alt="Krimse working with a bride"
                 fill
                 priority
                 sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                className="object-contain p-2 z-10 transition-transform duration-700 group-hover:scale-[1.02]"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80" />
-              <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-black/60 backdrop-blur-md border border-white/10">
-                <p className="text-[10px] uppercase tracking-[0.25em] text-[#E8C8CC] font-medium">
-                  {siteConfig.serviceArea}
-                </p>
-                <h3 className="font-editorial text-2xl text-[#FAF8F6] font-light">
-                  {siteConfig.name}
-                </h3>
+
+              {/* Subtle Bottom Gradient */}
+              <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/80 via-black/30 to-transparent z-20 pointer-events-none" />
+
+              {/* Info Badge */}
+              <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 p-3 sm:p-4 rounded-2xl bg-black/60 backdrop-blur-md border border-white/10 z-20 flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.25em] text-[#E8C8CC] font-medium">
+                    {siteConfig.serviceArea}
+                  </p>
+                  <h3 className="font-editorial text-lg sm:text-xl text-[#FAF8F6] font-light">
+                    {siteConfig.name}
+                  </h3>
+                </div>
+                <span className="hidden sm:inline-flex px-3 py-1 rounded-full bg-[var(--badge-bg)] border border-[var(--badge-border)] text-[var(--accent-blush)] text-[10px] uppercase tracking-[0.2em] font-medium">
+                  Lead Artist
+                </span>
               </div>
             </div>
           </div>

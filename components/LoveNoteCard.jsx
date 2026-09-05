@@ -1,5 +1,4 @@
-import Image from "next/image";
-import { Star, CheckCircle2, Eye, MapPin } from "lucide-react";
+import { Star, CheckCircle2 } from "lucide-react";
 import { GoogleIcon } from "@/components/Icons";
 
 export default function LoveNoteCard({ review, index = 0, priority = false, onImageClick = null }) {
@@ -33,15 +32,11 @@ export default function LoveNoteCard({ review, index = 0, priority = false, onIm
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3.5">
             {profilePhoto ? (
-              <div className="relative w-12 h-12 rounded-full overflow-hidden border border-[var(--border)] shrink-0 bg-[var(--bg-input)] shadow-md group-hover:border-[var(--accent-rose)] transition-colors duration-300">
-                <Image
-                  src={profilePhoto}
-                  alt={`${authorName} Google review profile`}
-                  fill
-                  sizes="48px"
-                  className="object-cover"
-                />
-              </div>
+              <img
+                src={profilePhoto}
+                alt={`${authorName} Google review profile`}
+                className="w-12 h-12 rounded-full object-cover border border-[var(--border)] shrink-0 shadow-md group-hover:border-[var(--accent-rose)] transition-colors duration-300"
+              />
             ) : (
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--badge-bg)] to-[var(--bg-input)] border border-[var(--badge-border)] flex items-center justify-center text-[var(--accent-blush)] font-editorial text-xl font-medium shrink-0 shadow-inner group-hover:scale-105 group-hover:border-[var(--accent-rose)] transition-all duration-300">
                 {initial}
@@ -88,9 +83,12 @@ export default function LoveNoteCard({ review, index = 0, priority = false, onIm
           </div>
         </div>
 
-        {/* 2. Makeup / Bridal Transformation Image (Full Uncropped Display) */}
+        {/* 2. Makeup / Bridal Transformation Image (Direct Full Photo with Thin Border Line) */}
         {makeupImage && (
-          <div
+          <img
+            src={makeupImage}
+            alt={`${authorName} bridal makeup artistry by Beauty By Krimse`}
+            loading={priority ? "eager" : "lazy"}
             onClick={() => onImageClick && onImageClick(review)}
             role={onImageClick ? "button" : undefined}
             tabIndex={onImageClick ? 0 : undefined}
@@ -100,46 +98,10 @@ export default function LoveNoteCard({ review, index = 0, priority = false, onIm
                 onImageClick(review);
               }
             }}
-            className={`relative w-full aspect-[3/4] sm:aspect-[4/5] rounded-2xl overflow-hidden border border-[var(--border)] shadow-md bg-[#0B0B0B] group-hover:border-[var(--border-accent)] transition-all duration-500 flex items-center justify-center ${
-              onImageClick ? "cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--accent-rose)]" : ""
+            className={`w-full h-auto block rounded-2xl border border-[var(--border)] shadow-sm hover:border-[var(--border-accent)] hover:shadow-md transition-all duration-300 ${
+              onImageClick ? "cursor-pointer" : ""
             }`}
-          >
-            {/* Ambient blurred backdrop so letterboxing has a glowing luxury aesthetic */}
-            <div className="absolute inset-0 overflow-hidden opacity-25 filter blur-xl scale-125 pointer-events-none">
-              <Image
-                src={makeupImage}
-                alt=""
-                fill
-                sizes="300px"
-                className="object-cover"
-                aria-hidden="true"
-              />
-            </div>
-
-            {/* Main Full Image with no cropping */}
-            <Image
-              src={makeupImage}
-              alt={`${authorName} bridal makeup artistry by Beauty By Krimse`}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              loading={priority ? "eager" : "lazy"}
-              className="object-contain p-1 z-10 transition-transform duration-700 group-hover:scale-[1.03]"
-            />
-
-            {/* Gradient overlay for bottom badge visibility */}
-            <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/60 to-transparent pointer-events-none z-10" />
-
-            <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none z-20">
-              <span className="px-2.5 py-0.5 rounded-full bg-black/70 backdrop-blur-md text-[9px] uppercase tracking-widest text-[#E8C8CC] border border-white/15 shadow-sm">
-                Bridal Look
-              </span>
-
-              <span className="opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0 px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md text-white border border-white/20 text-[10px] flex items-center gap-1.5 shadow-lg">
-                <Eye className="w-3 h-3 text-[var(--accent-blush)]" />
-                <span className="text-[9px] font-medium tracking-wide">Expand</span>
-              </span>
-            </div>
-          </div>
+          />
         )}
 
         {/* 3. Customer Review */}
