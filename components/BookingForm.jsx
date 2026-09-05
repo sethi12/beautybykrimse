@@ -4,33 +4,22 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   MessageCircle, Mail, Sparkles, CheckCircle2, Calendar, Clock,
-  MapPin, Users, ArrowRight, ArrowLeft, User, Phone, AtSign,
-  PartyPopper, Scissors, FileText, Send, Edit3, Check
+  MapPin, Users, ArrowRight, ArrowLeft, User, Send, Edit3, Check
 } from "lucide-react";
-import { siteConfig, services } from "@/lib/data";
+import { siteConfig, serviceDropdownOptions, whyBookWithUs } from "@/lib/data";
+import ClockTimePicker from "@/components/ClockTimePicker";
 
 const STEPS = [
-  { id: 1, label: "Your Details", icon: User },
-  { id: 2, label: "Your Event", icon: Calendar },
+  { id: 1, label: "Personal Info", icon: User },
+  { id: 2, label: "Event Info", icon: Calendar },
   { id: 3, label: "Services", icon: Sparkles },
-  { id: 4, label: "Preferences", icon: FileText },
+  { id: 4, label: "Details", icon: Users },
   { id: 5, label: "Review & Send", icon: Send },
 ];
 
 const EVENT_TYPES = [
   "Wedding", "Engagement", "Reception", "Pre-Wedding Event",
-  "Party", "Photoshoot", "Other"
-];
-
-const SERVICE_OPTIONS = [
-  { id: "south-asian-bridal", label: "South Asian Bridal Hair & Makeup" },
-  { id: "western-bridal", label: "Western Bridal Hair & Makeup" },
-  { id: "semi-bridal", label: "Semi-Bridal Hair & Makeup" },
-  { id: "non-bridal", label: "Non-Bridal Hair & Makeup" },
-  { id: "bridal-party", label: "Bridal Party Services" },
-  { id: "makeup-only", label: "Makeup Only" },
-  { id: "hair-only", label: "Hair Only" },
-  { id: "trial", label: "Trial Appointment" },
+  "Special Event", "Photoshoot", "Celebration", "Other"
 ];
 
 const PEOPLE_OPTIONS = [
@@ -40,30 +29,31 @@ const PEOPLE_OPTIONS = [
 export default function BookingForm() {
   const searchParams = useSearchParams();
   const preService = searchParams.get("service") || "";
-  const preLook = searchParams.get("look") || "";
 
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
   const [form, setForm] = useState({
+    // Personal Information
     fullName: "",
     email: "",
-    phone: "",
+    phoneNumber: "",
+    // Event Information
     eventDate: "",
+    readyByTime: "",
+    locationCity: "",
+    // Service Information
+    serviceNeeded: preService || "south-asian-bridal",
+    numberOfPeople: "1 (Just me)",
     eventType: "Wedding",
-    venue: "",
-    services: preService ? [preService] : [],
-    peopleCount: "1 (Just me)",
-    notes: preLook ? `Inspired by look: ${preLook}` : "",
+    // Additional Information
+    messageInspiration: "",
   });
 
   useEffect(() => {
     if (preService) {
-      setForm((prev) => ({
-        ...prev,
-        services: prev.services.includes(preService) ? prev.services : [...prev.services, preService],
-      }));
+      setForm((prev) => ({ ...prev, serviceNeeded: preService }));
     }
   }, [preService]);
 
@@ -72,31 +62,22 @@ export default function BookingForm() {
     setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
-  const toggleService = (id) => {
-    setForm((prev) => ({
-      ...prev,
-      services: prev.services.includes(id)
-        ? prev.services.filter((s) => s !== id)
-        : [...prev.services, id],
-    }));
-    setErrors((prev) => ({ ...prev, services: undefined }));
-  };
-
   // --- Validation ---
   const validateStep = (s) => {
     const errs = {};
     if (s === 1) {
-      if (!form.fullName.trim()) errs.fullName = "Please enter your name";
+      if (!form.fullName.trim()) errs.fullName = "Please enter your full name";
       if (!form.email.trim()) errs.email = "Please enter your email";
       else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = "Please enter a valid email";
-      if (!form.phone.trim()) errs.phone = "Please enter your phone number";
+      if (!form.phoneNumber.trim()) errs.phoneNumber = "Please enter your phone number";
     }
     if (s === 2) {
       if (!form.eventDate) errs.eventDate = "Please select your event date";
-      if (!form.venue.trim()) errs.venue = "Please enter a venue or city";
+      if (!form.readyByTime.trim()) errs.readyByTime = "Please specify your ready-by time";
+      if (!form.locationCity.trim()) errs.locationCity = "Please enter getting ready location / city";
     }
     if (s === 3) {
-      if (form.services.length === 0) errs.services = "Please select at least one service";
+      if (!form.serviceNeeded) errs.serviceNeeded = "Please select a service";
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -108,27 +89,29 @@ export default function BookingForm() {
   const goBack = () => setStep((s) => Math.max(s - 1, 1));
   const goToStep = (s) => setStep(s);
 
-  // --- Build WhatsApp message ---
-  const buildMessage = () => {
-    const serviceLabels = form.services.map(
-      (id) => SERVICE_OPTIONS.find((s) => s.id === id)?.label || id
-    ).join(", ");
+  // --- Build Dispatch message ---
+  const getServiceLabel = (id) => {
+    const found = serviceDropdownOptions.find((s) => s.id === id);
+    return found ? found.label : id;
+  };
 
-    return `✨ *BEAUTYBYKRIMSE BRIDAL INQUIRY* ✨
+  const buildMessage = () => {
+    return `✨ *BEAUTY BY KRIMSE BOOKING INQUIRY* ✨
 -----------------------------------------
-👤 *Name:* ${form.fullName}
+👤 *Full Name:* ${form.fullName}
 📧 *Email:* ${form.email}
-📱 *Phone:* ${form.phone}
+📱 *Phone Number:* ${form.phoneNumber}
 
 📅 *Event Date:* ${form.eventDate}
+⏰ *Ready-By Time:* ${form.readyByTime}
+📍 *Getting Ready Location / City:* ${form.locationCity}
+
+💄 *Service Needed:* ${getServiceLabel(form.serviceNeeded)}
+👥 *Number of People:* ${form.numberOfPeople}
 🎉 *Event Type:* ${form.eventType}
-📍 *Venue / Location:* ${form.venue}
 
-💄 *Services:* ${serviceLabels}
-👥 *Number of People:* ${form.peopleCount}
-
-📝 *Additional Information:*
-${form.notes || "No additional notes."}
+📝 *Message / Inspiration Details:*
+${form.messageInspiration || "No additional notes provided."}
 -----------------------------------------`;
   };
 
@@ -139,7 +122,7 @@ ${form.notes || "No additional notes."}
   };
 
   const handleEmail = () => {
-    const subject = encodeURIComponent(`Bridal Inquiry: ${form.fullName} — ${form.eventDate}`);
+    const subject = encodeURIComponent(`Booking Inquiry: ${form.fullName} — ${form.eventDate}`);
     const body = encodeURIComponent(buildMessage().replace(/\*/g, "").replace(/✨/g, ""));
     window.location.href = `mailto:${siteConfig.email}?subject=${subject}&body=${body}`;
     setSubmitted(true);
@@ -147,7 +130,7 @@ ${form.notes || "No additional notes."}
 
   const progress = (step / 5) * 100;
 
-  // --- Submitted state ---
+  // --- Submitted State ---
   if (submitted) {
     return (
       <div className="w-full max-w-3xl mx-auto bg-[var(--bg-card)] border border-[var(--border)] rounded-3xl p-8 sm:p-12 text-center space-y-6 shadow-2xl">
@@ -158,29 +141,42 @@ ${form.notes || "No additional notes."}
           Inquiry Sent Successfully
         </h2>
         <p className="text-sm text-[var(--text-muted)] font-light max-w-md mx-auto">
-          Thank you, {form.fullName}! We&apos;ll review your inquiry and respond within 24 hours.
+          Thank you, {form.fullName}! We will review your event details and get back to you within 24–48 hours.
         </p>
         <button
-          onClick={() => { setSubmitted(false); setStep(1); setForm({ fullName: "", email: "", phone: "", eventDate: "", eventType: "Wedding", venue: "", services: [], peopleCount: "1 (Just me)", notes: "" }); }}
+          onClick={() => {
+            setSubmitted(false);
+            setStep(1);
+            setForm({
+              fullName: "",
+              email: "",
+              phoneNumber: "",
+              eventDate: "",
+              readyByTime: "",
+              locationCity: "",
+              serviceNeeded: "south-asian-bridal",
+              numberOfPeople: "1 (Just me)",
+              eventType: "Wedding",
+              messageInspiration: "",
+            });
+          }}
           className="text-xs uppercase tracking-[0.2em] text-[var(--accent-blush)] hover:text-[var(--text-primary)] transition-colors"
         >
-          Submit Another Inquiry
+          Submit Another Booking Inquiry
         </button>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto bg-[var(--bg-card)] border border-[var(--border)] rounded-3xl p-6 sm:p-10 md:p-12 shadow-2xl relative overflow-hidden">
+    <div className="w-full max-w-3xl mx-auto bg-[var(--bg-card)] border border-[var(--border)] rounded-3xl p-6 sm:p-10 md:p-12 shadow-2xl relative overflow-visible">
       {/* Decorative glow */}
-      <div className="absolute top-0 right-0 w-80 h-80 bg-radial from-[var(--accent-rose)]/10 to-transparent blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-80 h-80 bg-radial from-[var(--accent-rose)]/10 to-transparent blur-3xl pointer-events-none rounded-3xl overflow-hidden" />
 
       {/* ===== PROGRESS BAR ===== */}
       <div className="relative mb-10">
-        {/* Step labels */}
         <div className="hidden sm:flex items-center justify-between mb-3">
           {STEPS.map((s) => {
-            const StepIcon = s.icon;
             const isCompleted = step > s.id;
             const isCurrent = step === s.id;
             return (
@@ -189,16 +185,22 @@ ${form.notes || "No additional notes."}
                 onClick={() => s.id < step && goToStep(s.id)}
                 disabled={s.id > step}
                 className={`flex items-center gap-1.5 text-[10px] uppercase tracking-[0.18em] font-medium transition-colors ${
-                  isCurrent ? "text-[var(--accent-blush)]"
-                  : isCompleted ? "text-[var(--accent-rose)] cursor-pointer hover:text-[var(--accent-blush)]"
-                  : "text-[var(--text-faint)]"
+                  isCurrent
+                    ? "text-[var(--accent-blush)]"
+                    : isCompleted
+                    ? "text-[var(--accent-rose)] cursor-pointer hover:text-[var(--accent-blush)]"
+                    : "text-[var(--text-faint)]"
                 }`}
               >
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] border transition-all ${
-                  isCurrent ? "bg-[var(--accent-rose)] text-white border-[var(--accent-rose)]"
-                  : isCompleted ? "bg-[var(--badge-bg)] text-[var(--accent-rose)] border-[var(--badge-border)]"
-                  : "bg-[var(--bg-input)] text-[var(--text-faint)] border-[var(--border)]"
-                }`}>
+                <div
+                  className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] border transition-all ${
+                    isCurrent
+                      ? "bg-[var(--accent-rose)] text-white border-[var(--accent-rose)]"
+                      : isCompleted
+                      ? "bg-[var(--badge-bg)] text-[var(--accent-rose)] border-[var(--badge-border)]"
+                      : "bg-[var(--bg-input)] text-[var(--text-faint)] border-[var(--border)]"
+                  }`}
+                >
                   {isCompleted ? <Check className="w-3 h-3" /> : s.id}
                 </div>
                 <span className="hidden md:inline">{s.label}</span>
@@ -228,128 +230,181 @@ ${form.notes || "No additional notes."}
 
       {/* ===== STEP CONTENT ===== */}
       <div className="min-h-[320px]">
-
-        {/* STEP 1: Personal Details */}
+        {/* STEP 1: Personal Information */}
         {step === 1 && (
           <div className="space-y-6">
             <div className="space-y-1">
               <h2 className="font-editorial text-2xl sm:text-3xl text-[var(--text-primary)] font-light">
-                Let&apos;s Start With You
+                Personal Information
               </h2>
               <p className="text-xs text-[var(--text-muted)] font-light">
-                Tell us a little about yourself so we can personalize your experience.
+                Please enter your contact details so we can reach out to you.
               </p>
             </div>
 
             <div className="space-y-4">
               <FormField label="Full Name" required error={errors.fullName}>
-                <input type="text" value={form.fullName} onChange={(e) => update("fullName", e.target.value)} placeholder="e.g. Simran Kaur" className="form-input" />
+                <input
+                  type="text"
+                  value={form.fullName}
+                  onChange={(e) => update("fullName", e.target.value)}
+                  placeholder="e.g. Simran Kaur"
+                  className="form-input"
+                />
               </FormField>
-              <FormField label="Email Address" required error={errors.email}>
-                <input type="email" value={form.email} onChange={(e) => update("email", e.target.value)} placeholder="simran@example.com" className="form-input" />
+
+              <FormField label="Email" required error={errors.email}>
+                <input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => update("email", e.target.value)}
+                  placeholder="name@example.com"
+                  className="form-input"
+                />
               </FormField>
-              <FormField label="Phone / WhatsApp Number" required error={errors.phone}>
-                <input type="tel" value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="+1 (437) 000-0000" className="form-input" />
+
+              <FormField label="Phone Number" required error={errors.phoneNumber}>
+                <input
+                  type="tel"
+                  value={form.phoneNumber}
+                  onChange={(e) => update("phoneNumber", e.target.value)}
+                  placeholder="+1 (437) 000-0000"
+                  className="form-input"
+                />
               </FormField>
             </div>
           </div>
         )}
 
-        {/* STEP 2: Event Details */}
+        {/* STEP 2: Event Information */}
         {step === 2 && (
           <div className="space-y-6">
             <div className="space-y-1">
               <h2 className="font-editorial text-2xl sm:text-3xl text-[var(--text-primary)] font-light">
-                Tell Us About Your Event
+                Event Information
               </h2>
               <p className="text-xs text-[var(--text-muted)] font-light">
-                These details help us check availability and prepare a tailored proposal.
+                Tell us about your event date, location, and timeline.
               </p>
             </div>
 
             <div className="space-y-4">
               <FormField label="Event Date" required error={errors.eventDate} icon={Calendar}>
-                <input type="date" value={form.eventDate} onChange={(e) => update("eventDate", e.target.value)} className="form-input" />
+                <input
+                  type="date"
+                  value={form.eventDate}
+                  onChange={(e) => update("eventDate", e.target.value)}
+                  className="form-input"
+                />
               </FormField>
-              <FormField label="Event Type" icon={PartyPopper}>
-                <select value={form.eventType} onChange={(e) => update("eventType", e.target.value)} className="form-input">
-                  {EVENT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
-                </select>
+
+              <FormField label="Ready-By Time" required error={errors.readyByTime}>
+                <ClockTimePicker
+                  value={form.readyByTime}
+                  onChange={(timeStr) => update("readyByTime", timeStr)}
+                  error={errors.readyByTime}
+                  placeholder="Click to pick ready-by time"
+                  id="booking-ready-by-time"
+                />
               </FormField>
-              <FormField label="Venue / Location" required error={errors.venue} icon={MapPin}>
-                <input type="text" value={form.venue} onChange={(e) => update("venue", e.target.value)} placeholder="Toronto / Brampton / Mississauga" className="form-input" />
+
+              <FormField
+                label="Getting Ready Location / City"
+                required
+                error={errors.locationCity}
+                icon={MapPin}
+              >
+                <input
+                  type="text"
+                  value={form.locationCity}
+                  onChange={(e) => update("locationCity", e.target.value)}
+                  placeholder="e.g. Toronto / Brampton / Mississauga / Hotel Suite"
+                  className="form-input"
+                />
               </FormField>
             </div>
           </div>
         )}
 
-        {/* STEP 3: Service Selection */}
+        {/* STEP 3: Service Information */}
         {step === 3 && (
           <div className="space-y-6">
             <div className="space-y-1">
               <h2 className="font-editorial text-2xl sm:text-3xl text-[var(--text-primary)] font-light">
-                What Services Are You Interested In?
+                Service Information
               </h2>
               <p className="text-xs text-[var(--text-muted)] font-light">
-                Select all that apply. You can always adjust later.
-              </p>
-            </div>
-
-            {errors.services && (
-              <p className="text-xs text-red-400 font-medium">{errors.services}</p>
-            )}
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {SERVICE_OPTIONS.map((svc) => {
-                const selected = form.services.includes(svc.id);
-                return (
-                  <button
-                    key={svc.id}
-                    type="button"
-                    onClick={() => toggleService(svc.id)}
-                    className={`w-full text-left p-4 rounded-2xl border transition-all duration-200 flex items-center gap-3 ${
-                      selected
-                        ? "bg-[var(--badge-bg)] border-[var(--accent-rose)]/50 text-[var(--text-primary)]"
-                        : "bg-[var(--bg-input)] border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--border-hover)]"
-                    }`}
-                  >
-                    <div className={`w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-all ${
-                      selected ? "border-[var(--accent-rose)] bg-[var(--accent-rose)]" : "border-[var(--border-hover)]"
-                    }`}>
-                      {selected && <Check className="w-3 h-3 text-white" />}
-                    </div>
-                    <span className="text-sm font-light">{svc.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* STEP 4: Additional Info */}
-        {step === 4 && (
-          <div className="space-y-6">
-            <div className="space-y-1">
-              <h2 className="font-editorial text-2xl sm:text-3xl text-[var(--text-primary)] font-light">
-                A Few More Details
-              </h2>
-              <p className="text-xs text-[var(--text-muted)] font-light">
-                Optional details to help us understand your vision.
+                Select the service you need for your booking.
               </p>
             </div>
 
             <div className="space-y-4">
-              <FormField label="Number of People" icon={Users}>
-                <select value={form.peopleCount} onChange={(e) => update("peopleCount", e.target.value)} className="form-input">
-                  {PEOPLE_OPTIONS.map((p) => <option key={p} value={p}>{p}</option>)}
+              <FormField label="Service Needed" required error={errors.serviceNeeded}>
+                <select
+                  value={form.serviceNeeded}
+                  onChange={(e) => update("serviceNeeded", e.target.value)}
+                  className="form-input"
+                >
+                  {serviceDropdownOptions.map((svc) => (
+                    <option key={svc.id} value={svc.id}>
+                      {svc.label}
+                    </option>
+                  ))}
                 </select>
               </FormField>
-              <FormField label="Tell us about your event or the look you're dreaming of">
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <FormField label="Number of People" icon={Users}>
+                  <select
+                    value={form.numberOfPeople}
+                    onChange={(e) => update("numberOfPeople", e.target.value)}
+                    className="form-input"
+                  >
+                    {PEOPLE_OPTIONS.map((p) => (
+                      <option key={p} value={p}>
+                        {p}
+                      </option>
+                    ))}
+                  </select>
+                </FormField>
+
+                <FormField label="Event Type">
+                  <select
+                    value={form.eventType}
+                    onChange={(e) => update("eventType", e.target.value)}
+                    className="form-input"
+                  >
+                    {EVENT_TYPES.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </FormField>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 4: Additional Information */}
+        {step === 4 && (
+          <div className="space-y-6">
+            <div className="space-y-1">
+              <h2 className="font-editorial text-2xl sm:text-3xl text-[var(--text-primary)] font-light">
+                Additional Information
+              </h2>
+              <p className="text-xs text-[var(--text-muted)] font-light">
+                Share any inspiration, outfit colors, or details regarding your vision.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <FormField label="Message / Inspiration Details">
                 <textarea
                   rows={4}
-                  value={form.notes}
-                  onChange={(e) => update("notes", e.target.value)}
-                  placeholder="Share your outfit colours, jewelry style, Pinterest inspiration, or any special requests..."
+                  value={form.messageInspiration}
+                  onChange={(e) => update("messageInspiration", e.target.value)}
+                  placeholder="Share outfit style, colors, jewelry, Pinterest inspiration, or special requests..."
                   className="form-input resize-none"
                 />
               </FormField>
@@ -362,38 +417,37 @@ ${form.notes || "No additional notes."}
           <div className="space-y-6">
             <div className="space-y-1">
               <h2 className="font-editorial text-2xl sm:text-3xl text-[var(--text-primary)] font-light">
-                Review Your Inquiry
+                Review Your Booking Details
               </h2>
               <p className="text-xs text-[var(--text-muted)] font-light">
-                Please confirm your details before sending.
+                Please verify your information before sending.
               </p>
             </div>
 
             <div className="space-y-4">
-              <ReviewSection title="Your Details" stepNum={1} onEdit={() => goToStep(1)}>
-                <ReviewRow label="Name" value={form.fullName} />
+              <ReviewSection title="Personal Information" stepNum={1} onEdit={() => goToStep(1)}>
+                <ReviewRow label="Full Name" value={form.fullName} />
                 <ReviewRow label="Email" value={form.email} />
-                <ReviewRow label="Phone" value={form.phone} />
+                <ReviewRow label="Phone Number" value={form.phoneNumber} />
               </ReviewSection>
 
-              <ReviewSection title="Your Event" stepNum={2} onEdit={() => goToStep(2)}>
-                <ReviewRow label="Event" value={form.eventType} />
-                <ReviewRow label="Date" value={form.eventDate} />
-                <ReviewRow label="Venue" value={form.venue} />
+              <ReviewSection title="Event Information" stepNum={2} onEdit={() => goToStep(2)}>
+                <ReviewRow label="Event Date" value={form.eventDate} />
+                <ReviewRow label="Ready-By Time" value={form.readyByTime} />
+                <ReviewRow label="Location / City" value={form.locationCity} />
               </ReviewSection>
 
-              <ReviewSection title="Services" stepNum={3} onEdit={() => goToStep(3)}>
+              <ReviewSection title="Service Information" stepNum={3} onEdit={() => goToStep(3)}>
+                <ReviewRow label="Service Needed" value={getServiceLabel(form.serviceNeeded)} />
+                <ReviewRow label="Number of People" value={form.numberOfPeople} />
+                <ReviewRow label="Event Type" value={form.eventType} />
+              </ReviewSection>
+
+              <ReviewSection title="Additional Information" stepNum={4} onEdit={() => goToStep(4)}>
                 <ReviewRow
-                  label="Services"
-                  value={form.services.map(
-                    (id) => SERVICE_OPTIONS.find((s) => s.id === id)?.label || id
-                  ).join(", ")}
+                  label="Message / Inspiration Details"
+                  value={form.messageInspiration || "None provided"}
                 />
-              </ReviewSection>
-
-              <ReviewSection title="Preferences" stepNum={4} onEdit={() => goToStep(4)}>
-                <ReviewRow label="People" value={form.peopleCount} />
-                <ReviewRow label="Notes" value={form.notes || "None"} />
               </ReviewSection>
             </div>
 
@@ -405,7 +459,7 @@ ${form.notes || "No additional notes."}
                 className="w-full sm:flex-1 py-4 px-6 rounded-full bg-[var(--whatsapp)] text-[#0D0D0D] text-xs font-bold uppercase tracking-[0.18em] hover:brightness-110 transition-all flex items-center justify-center gap-2.5 shadow-lg group"
               >
                 <MessageCircle className="w-4 h-4 fill-current group-hover:scale-110 transition-transform" />
-                <span>Continue on WhatsApp</span>
+                <span>Send via WhatsApp</span>
               </button>
 
               <button
@@ -447,7 +501,7 @@ ${form.notes || "No additional notes."}
       )}
 
       <p className="text-center text-[11px] text-[var(--text-faint)] pt-6 font-light">
-        Your information is strictly confidential. We reply within 24 business hours.
+        We review all inquiries and get back to you within 24–48 hours.
       </p>
 
       {/* Global form input styles */}
@@ -481,8 +535,6 @@ ${form.notes || "No additional notes."}
     </div>
   );
 }
-
-// --- Sub-Components ---
 
 function FormField({ label, required, error, icon: Icon, children }) {
   return (
@@ -527,7 +579,7 @@ function ReviewSection({ title, stepNum, onEdit, children }) {
 function ReviewRow({ label, value }) {
   return (
     <div className="flex items-start gap-3 text-sm">
-      <span className="text-[var(--text-faint)] font-light w-16 shrink-0">{label}</span>
+      <span className="text-[var(--text-faint)] font-light w-28 shrink-0">{label}</span>
       <span className="text-[var(--text-primary)] font-light">{value || "—"}</span>
     </div>
   );

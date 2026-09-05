@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Sparkles, Eye, ArrowRight } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import PortfolioLightbox from "@/components/PortfolioLightbox";
-import { portfolioCategories, portfolioItems } from "@/lib/data";
+import { portfolioCategories, portfolioItems, siteConfig } from "@/lib/data";
 
 export default function PortfolioPage() {
   const [activeCategory, setActiveCategory] = useState("all");
@@ -26,10 +26,10 @@ export default function PortfolioPage() {
   return (
     <div className="space-y-16 pb-24">
       <PageHeader
-        badge="Editorial Portfolio"
-        title="The Bridal Gallery"
-        subtitle="Unretouched Elegance & Bespoke Artistry"
-        description="A curated look into our brides across Toronto and the GTA. Featuring traditional South Asian bridal elegance, timeless Western bridal suites, vibrant Sangeet glam, and couture hair architecture."
+        badge="Bridal Portfolio"
+        title="Featured Brides Gallery"
+        subtitle={siteConfig.name}
+        description="Showcasing South Asian Brides, Western Brides, Reception Glam, Engagement Glam, and Bridal Party looks across Canada, the GTA & beyond."
         breadcrumbs={[{ name: "Portfolio" }]}
       />
 
@@ -131,21 +131,21 @@ export default function PortfolioPage() {
         />
       )}
 
-      {/* Inquiry CTA */}
+      {/* Inquiry CTA from PDF */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-12">
-        <div className="p-8 sm:p-12 rounded-3xl bg-[var(--bg-card)] border border-[var(--border)] space-y-4">
+        <div className="p-8 sm:p-12 rounded-3xl bg-[var(--bg-card)] border border-[var(--border)] space-y-4 shadow-xl">
           <h2 className="font-editorial text-3xl sm:text-4xl text-[var(--text-primary)] uppercase font-light">
-            Love a specific bridal look?
+            Let&apos;s Bring Your Vision to Life
           </h2>
           <p className="text-xs sm:text-sm text-[var(--text-muted)] font-light max-w-lg mx-auto">
-            Mention the style or save the photos for your trial session when submitting your inquiry.
+            Whether it&apos;s a wedding, special event, photoshoot, or celebration, we&apos;d love to be part of your day.
           </p>
           <div className="pt-2">
             <Link
               href="/inquire"
               className="inline-block px-8 py-3.5 rounded-full bg-[var(--accent-rose)] text-white text-xs font-semibold uppercase tracking-[0.2em] hover:bg-[var(--accent-blush)] hover:text-[#0D0D0D] transition-all"
             >
-              Inquire Your Date
+              Book Your Date
             </Link>
           </div>
         </div>

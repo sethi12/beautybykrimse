@@ -3,18 +3,17 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Sparkles, ArrowRight, Phone, Mail, MapPin, MessageCircle } from "lucide-react";
+import { Menu, X, Sparkles, ArrowRight, Mail, MapPin, MessageCircle } from "lucide-react";
 import { InstagramIcon } from "@/components/Icons";
 import ThemeToggle from "@/components/ThemeToggle";
 import BrandLogo from "@/components/BrandLogo";
 import { siteConfig } from "@/lib/data";
 
 const navLinks = [
-  { name: "Portfolio", href: "/portfolio" },
   { name: "Services", href: "/services" },
-  { name: "Packages", href: "/packages" },
+  { name: "Portfolio", href: "/portfolio" },
   { name: "Love Notes", href: "/reviews" },
-  { name: "About", href: "/about" },
+  { name: "About Krimse", href: "/about" },
   { name: "Contact", href: "/contact" },
 ];
 
@@ -67,7 +66,7 @@ export default function Navbar() {
             {/* Brand Logo */}
             <Link
               href="/"
-              aria-label="BeautyByKrimse Home"
+              aria-label="Beauty By Krimse Home"
               className="focus:outline-none shrink-0"
               onClick={handleLinkClick}
             >
@@ -75,7 +74,7 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Navigation Links */}
-            <nav className="hidden lg:flex items-center space-x-3.5 xl:space-x-6 2xl:space-x-8 shrink-0">
+            <nav className="hidden lg:flex items-center space-x-4 xl:space-x-8 shrink-0">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href;
                 return (
@@ -97,7 +96,7 @@ export default function Navbar() {
               })}
             </nav>
 
-            {/* Desktop Right CTA Bar (ThemeToggle + Inquire Date) */}
+            {/* Desktop Right CTA Bar (ThemeToggle + Book Your Date) */}
             <div className="hidden lg:flex items-center space-x-2.5 xl:space-x-3.5 shrink-0">
               <ThemeToggle />
 
@@ -106,7 +105,7 @@ export default function Navbar() {
                 className="relative group overflow-hidden px-5 xl:px-6 py-2 xl:py-2.5 rounded-full bg-[var(--accent-rose)] text-white text-[10.5px] xl:text-[11.5px] font-semibold uppercase tracking-[0.16em] transition-all duration-200 hover:bg-[var(--accent-blush)] hover:text-[#0D0D0D] hover:shadow-[0_0_20px_var(--shadow-accent)] whitespace-nowrap"
               >
                 <span className="relative z-10 flex items-center gap-1.5">
-                  <span>Inquire Date</span>
+                  <span>Book Your Date</span>
                   <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
                 </span>
               </Link>
@@ -121,7 +120,7 @@ export default function Navbar() {
                 onClick={handleLinkClick}
                 className="px-3.5 py-1.5 rounded-full bg-[var(--accent-rose)] text-white text-[10.5px] font-semibold uppercase tracking-wider shrink-0"
               >
-                Inquire
+                Book
               </Link>
 
               {/* Mobile Menu Hamburger Trigger */}
@@ -209,7 +208,7 @@ export default function Navbar() {
                 onClick={handleLinkClick}
                 className="w-full text-center py-3.5 rounded-full bg-[var(--accent-rose)] text-white text-xs font-semibold uppercase tracking-[0.18em] shadow-lg hover:bg-[var(--accent-blush)] hover:text-[#0D0D0D] transition-colors block"
               >
-                Inquire Your Wedding Date
+                Book Your Date
               </Link>
             </div>
           </div>
@@ -242,12 +241,12 @@ export default function Navbar() {
 
             <div className="text-[11px] text-[var(--text-muted)] font-light space-y-1 pt-1">
               <div className="flex items-center gap-2">
-                <Phone className="w-3 h-3 text-[var(--accent-rose)]" />
-                <span>{siteConfig.displayPhone}</span>
+                <Mail className="w-3 h-3 text-[var(--accent-rose)]" />
+                <span>{siteConfig.email}</span>
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="w-3 h-3 text-[var(--accent-rose)]" />
-                <span>{siteConfig.location}</span>
+                <span>{siteConfig.serviceArea}</span>
               </div>
             </div>
           </div>

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { MessageCircle, Mail, Sparkles, CheckCircle2, Calendar, Clock, MapPin, Users, Send } from "lucide-react";
 import { siteConfig, services, packages } from "@/lib/data";
+import ClockTimePicker from "@/components/ClockTimePicker";
 
 export default function InquiryForm() {
   const searchParams = useSearchParams();
@@ -224,13 +225,10 @@ ${formData.fullName}`
               <Clock className="w-3.5 h-3.5 text-[#C9919A]" />
               <span>Ready-By Time</span>
             </label>
-            <input
-              type="text"
-              name="readyByTime"
+            <ClockTimePicker
               value={formData.readyByTime}
-              onChange={handleChange}
-              placeholder="e.g. 08:30 AM"
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-sm text-[#FAF8F6] placeholder-white/30 focus:outline-none focus:border-[#E8C8CC] focus:ring-1 focus:ring-[#E8C8CC] transition-colors"
+              onChange={(timeVal) => setFormData((prev) => ({ ...prev, readyByTime: timeVal }))}
+              placeholder="Select ready-by time"
             />
           </div>
 
