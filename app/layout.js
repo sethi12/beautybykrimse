@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ThemeProvider from "@/components/ThemeProvider";
+import ImageProtection from "@/components/ImageProtection";
 import { siteConfig } from "@/lib/data";
 
 const cormorantGaramond = Cormorant_Garamond({
@@ -101,6 +102,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] antialiased flex flex-col">
         <ThemeProvider>
+          <ImageProtection />
           <Navbar />
           <main className="flex-grow">{children}</main>
           <Footer />

@@ -272,3 +272,20 @@ html.theme-transitioning * {
     scroll-behavior: auto;
   }
 }
+
+/* Image Download & Context Protection */
+img,
+[data-protect-image],
+.protected-image {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+

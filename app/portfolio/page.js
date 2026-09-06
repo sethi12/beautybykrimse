@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Sparkles, Eye, ArrowRight } from "lucide-react";
@@ -12,11 +12,27 @@ export default function PortfolioPage() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [allItems, setAllItems] = useState(portfolioItems);
+
+  useEffect(() => {
+    // Automatically loads newly added photos from /assets folders at runtime
+    fetch("/api/portfolio")
+      .then((res) => {
+        if (res.ok) return res.json();
+        throw new Error("Failed to fetch dynamic portfolio");
+      })
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setAllItems(data);
+        }
+      })
+      .catch((err) => console.log("Using static portfolio items:", err));
+  }, []);
 
   const filteredItems =
     activeCategory === "all"
-      ? portfolioItems
-      : portfolioItems.filter((item) => item.category === activeCategory);
+      ? allItems
+      : allItems.filter((item) => item.category === activeCategory);
 
   const handleOpenLightbox = (item, index) => {
     setSelectedItem(item);
@@ -70,11 +86,12 @@ export default function PortfolioPage() {
               >
                 <Image
                   src={item.image}
-                  alt={item.caption || item.title}
+                  alt={item.title || item.categoryName || "Portfolio Look"}
                   fill
+                  draggable={false}
                   sizes={isLandscape ? "(max-width: 768px) 100vw, 66vw" : "(max-width: 768px) 100vw, 33vw"}
                   loading={index < 6 ? "eager" : "lazy"}
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105 select-none pointer-events-none"
                 />
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent opacity-75 group-hover:opacity-95 transition-opacity" />
@@ -92,9 +109,15 @@ export default function PortfolioPage() {
                 </div>
 
                 <div className="absolute inset-x-0 bottom-0 p-6 z-10 flex flex-col justify-end">
-                  <h3 className="font-editorial text-xl sm:text-2xl text-[#FAF8F6] font-light leading-snug">
-                    {item.title}
-                  </h3>
+                  {item.title ? (
+                    <h3 className="font-editorial text-xl sm:text-2xl text-[#FAF8F6] font-light leading-snug">
+                      {item.title}
+                    </h3>
+                  ) : (
+                    <h3 className="font-editorial text-xl sm:text-2xl text-[#FAF8F6] font-light leading-snug">
+                      {item.categoryName}
+                    </h3>
+                  )}
                   {item.caption && (
                     <p className="text-xs text-[#FAF8F6]/75 font-light line-clamp-2 mt-1.5 group-hover:text-[#FAF8F6]/90 transition-colors">
                       {item.caption}

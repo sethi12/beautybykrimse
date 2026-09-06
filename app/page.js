@@ -151,7 +151,7 @@ export default function HomePage() {
               >
                 <Image
                   src={item.image}
-                  alt={item.title}
+                  alt={item.category || "Featured Bride Look"}
                   fill
                   sizes={isWide ? "(max-width: 768px) 100vw, 66vw" : "(max-width: 768px) 100vw, 33vw"}
                   loading={idx < 3 ? "eager" : "lazy"}
@@ -161,14 +161,11 @@ export default function HomePage() {
 
                 <div className="absolute inset-x-0 bottom-0 p-6 flex flex-col justify-end">
                   <span className="text-[10px] uppercase tracking-[0.2em] text-[#E8C8CC] font-medium mb-1">
-                    {item.category}
+                    Featured Look
                   </span>
                   <h3 className="font-editorial text-xl sm:text-2xl text-[#FAF8F6] font-light">
-                    {item.title}
+                    {item.category}
                   </h3>
-                  <p className="text-xs text-[#FAF8F6]/80 font-light mt-1">
-                    {item.caption}
-                  </p>
                 </div>
               </div>
             );

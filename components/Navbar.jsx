@@ -7,6 +7,7 @@ import { Menu, X, Sparkles, ArrowRight, Mail, MapPin, MessageCircle } from "luci
 import { InstagramIcon } from "@/components/Icons";
 import ThemeToggle from "@/components/ThemeToggle";
 import BrandLogo from "@/components/BrandLogo";
+import { useTheme } from "@/components/ThemeProvider";
 import { siteConfig } from "@/lib/data";
 
 const navLinks = [
@@ -20,7 +21,15 @@ const navLinks = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+  const { theme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = !mounted || theme === "dark";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -55,11 +64,10 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-[var(--glass-bg)] backdrop-blur-md py-3 border-b border-[var(--glass-border)] shadow-xl"
-            : "bg-gradient-to-b from-[var(--bg-primary)]/90 via-[var(--bg-primary)]/50 to-transparent py-3.5 sm:py-4"
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
+          ? "bg-[var(--glass-bg)] backdrop-blur-md py-3 border-b border-[var(--glass-border)] shadow-xl"
+          : "bg-gradient-to-b from-[var(--bg-primary)]/90 via-[var(--bg-primary)]/50 to-transparent py-3.5 sm:py-4"
+          }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-2 sm:gap-4">
@@ -67,10 +75,14 @@ export default function Navbar() {
             <Link
               href="/"
               aria-label="Beauty By Krimse Home"
-              className="focus:outline-none shrink-0"
+              className="focus:outline-none shrink-0 flex items-center"
               onClick={handleLinkClick}
             >
-              <BrandLogo size="navbar" />
+              <img
+                src={isDark ? "/logo-white.png" : "/logo.png"}
+                alt={siteConfig.name}
+                className="h-14 sm:h-15 w-auto object-contain transition-opacity duration-300"
+              />
             </Link>
 
             {/* Desktop Navigation Links */}
@@ -81,11 +93,10 @@ export default function Navbar() {
                   <Link
                     key={link.name}
                     href={link.href}
-                    className={`text-[11px] xl:text-xs uppercase tracking-[0.16em] xl:tracking-[0.18em] font-medium transition-all duration-200 relative py-1 whitespace-nowrap ${
-                      isActive
-                        ? "text-[var(--accent-blush)] font-semibold"
-                        : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-                    }`}
+                    className={`text-[11px] xl:text-xs uppercase tracking-[0.16em] xl:tracking-[0.18em] font-medium transition-all duration-200 relative py-1 whitespace-nowrap ${isActive
+                      ? "text-[var(--accent-blush)] font-semibold"
+                      : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                      }`}
                   >
                     {link.name}
                     {isActive && (
@@ -140,28 +151,36 @@ export default function Navbar() {
 
       {/* Smooth Side-Menu Drawer & Backdrop for Mobile Screen */}
       <div
-        className={`lg:hidden fixed inset-0 z-50 transition-visibility duration-300 ${
-          isOpen ? "visible pointer-events-auto" : "invisible pointer-events-none delay-300"
-        }`}
+        className={`lg:hidden fixed inset-0 z-50 transition-visibility duration-300 ${isOpen ? "visible pointer-events-auto" : "invisible pointer-events-none delay-300"
+          }`}
       >
         {/* Backdrop Fade Overlay */}
         <div
-          className={`fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-in-out ${
-            isOpen ? "opacity-100" : "opacity-0"
-          }`}
+          className={`fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-in-out ${isOpen ? "opacity-100" : "opacity-0"
+            }`}
           onClick={() => setIsOpen(false)}
         />
 
         {/* Slide-in Side Drawer from Right */}
         <div
-          className={`fixed top-0 right-0 bottom-0 w-[310px] sm:w-[350px] max-w-[85vw] bg-[var(--bg-card)] border-l border-[var(--border)] p-6 shadow-2xl z-10 flex flex-col justify-between overflow-y-auto transform transition-transform duration-300 ease-out ${
-            isOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+          className={`fixed top-0 right-0 bottom-0 w-[310px] sm:w-[350px] max-w-[85vw] bg-[var(--bg-card)] border-l border-[var(--border)] p-6 shadow-2xl z-10 flex flex-col justify-between overflow-y-auto transform transition-transform duration-300 ease-out ${isOpen ? "translate-x-0" : "translate-x-full"
+            }`}
         >
           {/* Drawer Top Header */}
           <div className="space-y-6">
             <div className="flex items-center justify-between pb-4 border-b border-[var(--border)]">
-              <BrandLogo size="navbar" />
+              <Link
+                href="/"
+                aria-label="Beauty By Krimse Home"
+                className="focus:outline-none shrink-0"
+                onClick={handleLinkClick}
+              >
+                <img
+                  src={isDark ? "/logo-white.png" : "/logo.png"}
+                  alt={siteConfig.name}
+                  className="h-12 w-auto object-contain"
+                />
+              </Link>
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
@@ -184,11 +203,10 @@ export default function Navbar() {
                     key={link.name}
                     href={link.href}
                     onClick={handleLinkClick}
-                    className={`text-lg font-editorial tracking-[0.08em] py-2 px-2 rounded-xl transition-all flex items-center justify-between ${
-                      isActive
-                        ? "bg-[var(--badge-bg)] text-[var(--accent-blush)] font-medium pl-3 border border-[var(--badge-border)]"
-                        : "text-[var(--text-primary)] hover:text-[var(--accent-blush)] hover:bg-[var(--bg-input)]"
-                    }`}
+                    className={`text-lg font-editorial tracking-[0.08em] py-2 px-2 rounded-xl transition-all flex items-center justify-between ${isActive
+                      ? "bg-[var(--badge-bg)] text-[var(--accent-blush)] font-medium pl-3 border border-[var(--badge-border)]"
+                      : "text-[var(--text-primary)] hover:text-[var(--accent-blush)] hover:bg-[var(--bg-input)]"
+                      }`}
                   >
                     <span>{link.name}</span>
                     {isActive ? (

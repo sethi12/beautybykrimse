@@ -127,16 +127,19 @@ export default function PortfolioLightbox({
       <div className="w-full h-full max-w-6xl max-h-[92vh] sm:max-h-[88vh] mx-auto p-4 sm:p-8 flex flex-col md:flex-row items-center justify-center gap-4 sm:gap-10 pt-16 sm:pt-8 overflow-y-auto md:overflow-hidden">
         {/* Image Frame (Uncropped) */}
         <div className="relative w-full h-[50vh] sm:h-[65vh] md:h-full md:flex-1 flex items-center justify-center">
-          <div className="relative w-full h-full max-h-full flex items-center justify-center">
+          <div className="relative w-full h-full max-h-full flex items-center justify-center lightbox-image-container select-none" data-protect-image>
             <Image
               key={current.image}
               src={current.image}
-              alt={current.caption || current.title}
+              alt={current.title || current.categoryName || "Portfolio Look"}
               fill
               priority
+              draggable={false}
               sizes="(max-width: 768px) 100vw, 70vw"
-              className="object-contain rounded-sm drop-shadow-2xl transition-opacity duration-300 animate-fade-in"
+              className="object-contain rounded-sm drop-shadow-2xl transition-opacity duration-300 animate-fade-in pointer-events-none select-none"
             />
+            {/* Transparent overlay protecting image from context save & drag */}
+            <div className="absolute inset-0 z-20 cursor-default" />
           </div>
         </div>
 
@@ -149,7 +152,7 @@ export default function PortfolioLightbox({
             </div>
 
             <h3 className="font-editorial text-xl sm:text-2xl sm:text-3xl text-[#FAF8F6] font-light leading-tight">
-              {current.title}
+              {current.title || current.categoryName || "Bridal Artistry"}
             </h3>
 
             {current.caption && (
@@ -174,7 +177,7 @@ export default function PortfolioLightbox({
 
           <div className="pt-4 sm:pt-6 border-t border-white/10 mt-4 sm:mt-6 flex flex-col gap-2.5 sm:gap-3">
             <Link
-              href={`/inquire?look=${encodeURIComponent(current.title)}`}
+              href={`/inquire?look=${encodeURIComponent(current.title || current.categoryName || "Portfolio Look")}`}
               onClick={onClose}
               className="w-full py-3 px-4 rounded-full bg-[#FAF8F6] text-[#0D0D0D] hover:bg-[#E8C8CC] text-xs font-semibold uppercase tracking-[0.16em] transition-colors flex items-center justify-center gap-2 shadow-md"
             >
