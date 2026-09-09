@@ -126,7 +126,7 @@ export default function HomePage() {
               Featured Brides Gallery
             </h2>
             <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-2 font-light max-w-xl">
-              Showcasing South Asian Brides, Western Brides, Reception Glam, Engagement Glam, and Bridal Party looks.
+              Showcasing South Asian Brides, Western Brides, Reception Glam, Semi Bridal Hair & Makeup, and Bridal Party looks.
             </p>
           </div>
 

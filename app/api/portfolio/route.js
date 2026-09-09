@@ -84,6 +84,9 @@ function interleaveCategoryItems(itemsByCategory) {
 const CATEGORY_TO_FOLDER_MAP = {
   "south-asian-brides": "southasianbrides",
   "western-brides": "westernbrides",
+  "reception-glam": "receptionglam",
+  "engagement-glam": "engagementglam",
+  "bridal-party": "bridalparty",
 };
 
 export async function GET() {
