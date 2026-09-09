@@ -98,19 +98,19 @@ export default function BookingForm() {
   const buildMessage = () => {
     return `✨ *BEAUTY BY KRIMSE BOOKING INQUIRY* ✨
 -----------------------------------------
-👤 *Full Name:* ${form.fullName}
-📧 *Email:* ${form.email}
-📱 *Phone Number:* ${form.phoneNumber}
+ *Full Name:* ${form.fullName}
+ *Email:* ${form.email}
+ *Phone Number:* ${form.phoneNumber}
 
-📅 *Event Date:* ${form.eventDate}
-⏰ *Ready-By Time:* ${form.readyByTime}
-📍 *Getting Ready Location / City:* ${form.locationCity}
+ *Event Date:* ${form.eventDate}
+ *Ready-By Time:* ${form.readyByTime}
+ *Getting Ready Location / City:* ${form.locationCity}
 
-💄 *Service Needed:* ${getServiceLabel(form.serviceNeeded)}
-👥 *Number of People:* ${form.numberOfPeople}
-🎉 *Event Type:* ${form.eventType}
+ *Service Needed:* ${getServiceLabel(form.serviceNeeded)}
+ *Number of People:* ${form.numberOfPeople}
+ *Event Type:* ${form.eventType}
 
-📝 *Message / Inspiration Details:*
+ *Message / Inspiration Details:*
 ${form.messageInspiration || "No additional notes provided."}
 -----------------------------------------`;
   };
@@ -184,22 +184,20 @@ ${form.messageInspiration || "No additional notes provided."}
                 key={s.id}
                 onClick={() => s.id < step && goToStep(s.id)}
                 disabled={s.id > step}
-                className={`flex items-center gap-1.5 text-[10px] uppercase tracking-[0.18em] font-medium transition-colors ${
-                  isCurrent
+                className={`flex items-center gap-1.5 text-[10px] uppercase tracking-[0.18em] font-medium transition-colors ${isCurrent
                     ? "text-[var(--accent-blush)]"
                     : isCompleted
-                    ? "text-[var(--accent-rose)] cursor-pointer hover:text-[var(--accent-blush)]"
-                    : "text-[var(--text-faint)]"
-                }`}
+                      ? "text-[var(--accent-rose)] cursor-pointer hover:text-[var(--accent-blush)]"
+                      : "text-[var(--text-faint)]"
+                  }`}
               >
                 <div
-                  className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] border transition-all ${
-                    isCurrent
+                  className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] border transition-all ${isCurrent
                       ? "bg-[var(--accent-rose)] text-white border-[var(--accent-rose)]"
                       : isCompleted
-                      ? "bg-[var(--badge-bg)] text-[var(--accent-rose)] border-[var(--badge-border)]"
-                      : "bg-[var(--bg-input)] text-[var(--text-faint)] border-[var(--border)]"
-                  }`}
+                        ? "bg-[var(--badge-bg)] text-[var(--accent-rose)] border-[var(--badge-border)]"
+                        : "bg-[var(--bg-input)] text-[var(--text-faint)] border-[var(--border)]"
+                    }`}
                 >
                   {isCompleted ? <Check className="w-3 h-3" /> : s.id}
                 </div>
