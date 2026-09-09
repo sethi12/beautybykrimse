@@ -45,7 +45,7 @@ export default function PortfolioPage() {
         badge="Bridal Portfolio"
         title="Featured Brides Gallery"
         subtitle={siteConfig.name}
-        description="Showcasing South Asian Brides, Western Brides, Reception Glam, Semi Bridal Hair & Makeup, and Bridal Party looks across Canada, the GTA & beyond."
+        description="Showcasing South Asian Brides, Western Brides, Reception Glam, Semi Bridal Hair & Makeup, and Bridal Party looks across Toronto, GTA & Beyond (Destination Events)."
         breadcrumbs={[{ name: "Portfolio" }]}
       />
 

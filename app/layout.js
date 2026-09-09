@@ -29,7 +29,7 @@ export const metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description:
-    "Luxury Hair & Makeup Services for Weddings, Special Events, Photoshoots & Celebrations. Timeless, elevated beauty tailored to your unique vision across Canada, GTA & Beyond.",
+    "Luxury Hair & Makeup Services for Weddings, Special Events, Photoshoots & Celebrations. Timeless, elevated beauty tailored to your unique vision across Toronto, GTA & Beyond (Destination Events).",
   keywords: [
     "Beauty By Krimse",
     "Toronto bridal makeup artist",
@@ -51,7 +51,7 @@ export const metadata = {
   openGraph: {
     title: `${siteConfig.name} — Luxury Hair & Makeup Artist`,
     description:
-      "Luxury Hair & Makeup Services for Weddings, Special Events, Photoshoots & Celebrations. Canada, GTA & Beyond.",
+      "Luxury Hair & Makeup Services for Weddings, Special Events, Photoshoots & Celebrations. Toronto, GTA & Beyond (Destination Events).",
     url: "https://beautybykrimse.com",
     siteName: siteConfig.name,
     images: [

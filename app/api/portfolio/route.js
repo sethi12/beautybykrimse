@@ -57,7 +57,18 @@ function resolveImagesForCategory(imagesPattern, fallbackFolder) {
     }
   }
 
-  return resolved;
+  // Deduplicate while preserving exact priority order
+  const seen = new Set();
+  const uniqueResolved = [];
+  for (const item of resolved) {
+    const key = (typeof item === "string" ? item : item.image)?.toLowerCase();
+    if (key && !seen.has(key)) {
+      seen.add(key);
+      uniqueResolved.push(item);
+    }
+  }
+
+  return uniqueResolved;
 }
 
 // Interleave items across categories in round-robin fashion for balanced mix (e.g. 1 South Asian, 1 Western, 1 Reception...)
