@@ -7,6 +7,12 @@ import { Sparkles, ArrowRight, Star, ShieldCheck, ChevronLeft, ChevronRight } fr
 import { siteConfig, heroMedia, services } from "@/lib/data";
 
 export default function Hero() {
+  const [mounted, setMounted] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
   // Build slide items from services alternating across each service
   const slides = useMemo(() => {
     if (!services || services.length === 0) {
@@ -44,58 +50,57 @@ export default function Hero() {
     return result;
   }, []);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [prevIndex, setPrevIndex] = useState(null);
-  const [direction, setDirection] = useState("right"); // "right" | "left"
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const timerRef = useRef(null);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  const goToSlide = useCallback(
-    (newIndex, dir = "right") => {
-      if (newIndex === currentIndex) return;
-      setDirection(dir);
-      setPrevIndex(currentIndex);
-      setCurrentIndex(newIndex);
-      setIsTransitioning(true);
+  // Continuous auto-rotation every 3 seconds
+  useEffect(() => {
+    if (!mounted || slides.length <= 1 || isPaused) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % slides.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [mounted, slides.length, isPaused, currentIndex]);
+
+  const handlePrev = useCallback(
+    (e) => {
+      e?.preventDefault();
+      e?.stopPropagation();
+      setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
     },
-    [currentIndex]
+    [slides.length]
   );
 
-  const resetTimer = useCallback(() => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    if (slides.length <= 1) return;
-    timerRef.current = setInterval(() => {
-      setCurrentIndex((curr) => {
-        const nextIdx = (curr + 1) % slides.length;
-        setDirection("right");
-        setPrevIndex(curr);
-        setIsTransitioning(true);
-        return nextIdx;
-      });
-    }, 3000);
-  }, [slides.length]);
+  const handleNext = useCallback(
+    (e) => {
+      e?.preventDefault();
+      e?.stopPropagation();
+      setCurrentIndex((prev) => (prev + 1) % slides.length);
+    },
+    [slides.length]
+  );
 
-  useEffect(() => {
-    resetTimer();
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [resetTimer]);
-
-  const handlePrev = (e) => {
-    e?.preventDefault();
-    e?.stopPropagation();
-    const prevIdx = (currentIndex - 1 + slides.length) % slides.length;
-    goToSlide(prevIdx, "left");
-    resetTimer();
+  // Touch Swipe for mobile devices
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.targetTouches[0].clientX;
   };
 
-  const handleNext = (e) => {
-    e?.preventDefault();
-    e?.stopPropagation();
-    const nextIdx = (currentIndex + 1) % slides.length;
-    goToSlide(nextIdx, "right");
-    resetTimer();
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    const diff = touchStartX.current - touchEndX.current;
+    if (Math.abs(diff) > 45) {
+      if (diff > 0) {
+        handleNext();
+      } else {
+        handlePrev();
+      }
+    }
   };
 
   const currentSlide = slides[currentIndex] || slides[0];
@@ -154,51 +159,50 @@ export default function Hero() {
           {/* Editorial Visual Showcase (Top column on mobile, Right column on desktop) */}
           <div className="order-1 lg:order-2 w-full lg:col-span-5 relative px-2 sm:px-4 lg:px-0">
             <div className="relative mx-auto max-w-sm sm:max-w-md lg:max-w-none">
-              {/* Primary Slideshow Card — dark solid container */}
-              <div className="relative aspect-[3/4] w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-[var(--border)] shadow-2xl group bg-[#0D0B0B] select-none">
-                {/* Physical Slide Replacement (Outgoing slides out, Incoming slides in) */}
+              {/* Primary Slideshow Card — dark solid container with animated luxury glow */}
+              <div
+                className="relative aspect-[3/4] w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-[var(--border-hover)] shadow-2xl group bg-[#0D0B0B] select-none animate-luxury-glow"
+                onMouseEnter={() => setIsPaused(true)}
+                onMouseLeave={() => setIsPaused(false)}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                {/* 3-Second Visual Progress Line */}
+                <div className="absolute top-0 left-0 right-0 h-[3px] bg-black/50 z-30 overflow-hidden">
+                  <div
+                    key={`progress-${currentIndex}`}
+                    className="h-full bg-gradient-to-r from-[var(--accent-rose)] via-[var(--accent-blush)] to-[var(--accent-gold)] animate-progress-fill relative overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer-slide" />
+                  </div>
+                </div>
+
+                {/* Slides Layer Stack (Hardware-Accelerated Cinematic Ken Burns & Cross-Dissolve) */}
                 {slides.map((slide, idx) => {
-                  const isCurrent = idx === currentIndex;
-                  const isPrevious = idx === prevIndex;
-
-                  // Render only the current and previous slide during transitions for peak 60fps performance
-                  if (!isCurrent && !isPrevious) return null;
-
-                  let animClass = "translate-x-0 z-10";
-                  if (isTransitioning) {
-                    if (isCurrent) {
-                      animClass =
-                        direction === "right"
-                          ? "animate-slide-in-right z-20"
-                          : "animate-slide-in-left z-20";
-                    } else if (isPrevious) {
-                      animClass =
-                        direction === "right"
-                          ? "animate-slide-out-left z-10"
-                          : "animate-slide-out-right z-10";
-                    }
-                  }
-
+                  const isActive = idx === currentIndex;
                   return (
                     <div
                       key={`${slide.serviceId}-${slide.image}-${idx}`}
-                      onAnimationEnd={() => {
-                        if (isCurrent) {
-                          setIsTransitioning(false);
-                          setPrevIndex(null);
-                        }
-                      }}
-                      className={`absolute inset-0 w-full h-full ${animClass}`}
+                      className={`absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out ${isActive
+                          ? "opacity-100 z-10 pointer-events-auto"
+                          : "opacity-0 z-0 pointer-events-none"
+                        }`}
                     >
-                      <Image
-                        src={slide.image}
-                        alt={`${slide.title} - Beauty By Krimse`}
-                        fill
-                        priority
-                        sizes="(max-width: 640px) 92vw, (max-width: 1024px) 450px, 45vw"
-                        className="object-cover object-top"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-90" />
+                      <div
+                        className={`relative w-full h-full ${isActive ? "animate-ken-burns" : "scale-100"
+                          }`}
+                      >
+                        <Image
+                          src={slide.image}
+                          alt={`${slide.title} - Beauty By Krimse`}
+                          fill
+                          priority={idx < 4}
+                          sizes="(max-width: 640px) 92vw, (max-width: 1024px) 450px, 45vw"
+                          className="object-cover object-top"
+                        />
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/10 opacity-90 pointer-events-none" />
                     </div>
                   );
                 })}
@@ -208,9 +212,9 @@ export default function Hero() {
                   type="button"
                   onClick={handlePrev}
                   aria-label="Previous slide"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 z-30 p-2 sm:p-2.5 rounded-full bg-black/55 hover:bg-black/85 text-white backdrop-blur-md border border-white/20 transition-all hover:scale-110 active:scale-95 shadow-xl group/btn cursor-pointer focus:outline-none"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 z-30 p-2 sm:p-2.5 rounded-full bg-black/60 hover:bg-black/95 text-white backdrop-blur-md border border-white/20 transition-all duration-300 hover:scale-115 active:scale-90 shadow-xl group/btn cursor-pointer focus:outline-none hover:border-[var(--accent-blush)] hover:shadow-[0_0_20px_var(--shadow-accent)]"
                 >
-                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-[#FAF8F6] transition-transform group-hover/btn:-translate-x-0.5" />
+                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-[#FAF8F6] transition-transform duration-300 group-hover/btn:-translate-x-1" />
                 </button>
 
                 {/* Right Navigation Arrow */}
@@ -218,32 +222,39 @@ export default function Hero() {
                   type="button"
                   onClick={handleNext}
                   aria-label="Next slide"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 z-30 p-2 sm:p-2.5 rounded-full bg-black/55 hover:bg-black/85 text-white backdrop-blur-md border border-white/20 transition-all hover:scale-110 active:scale-95 shadow-xl group/btn cursor-pointer focus:outline-none"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-30 p-2 sm:p-2.5 rounded-full bg-black/60 hover:bg-black/95 text-white backdrop-blur-md border border-white/20 transition-all duration-300 hover:scale-115 active:scale-90 shadow-xl group/btn cursor-pointer focus:outline-none hover:border-[var(--accent-blush)] hover:shadow-[0_0_20px_var(--shadow-accent)]"
                 >
-                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-[#FAF8F6] transition-transform group-hover/btn:translate-x-0.5" />
+                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-[#FAF8F6] transition-transform duration-300 group-hover/btn:translate-x-1" />
                 </button>
 
-                {/* Floating Caption with Word-by-Word Reveal */}
-                <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 z-20 pointer-events-none">
-                  <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-black/70 backdrop-blur-md border border-white/10 shadow-lg transition-all duration-300">
-                    <div className="flex items-center justify-between text-[9.5px] sm:text-[10px] uppercase tracking-[0.2em] text-[#E8C8CC] mb-1.5">
-                      <span key={`badge-${currentIndex}`} className="animate-fade-in">
-                        Service {currentSlide.number} • Luxury Artistry
-                      </span>
-                      <span className="flex items-center gap-1 text-[#C5A880]">
+                {/* Floating Caption with Rich Animated Entrance & Word-by-Word Reveal */}
+                {/* <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 z-20 pointer-events-none">
+                  <div className="p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-black/80 backdrop-blur-lg border border-white/15 shadow-2xl transition-all duration-500 animate-fade-in-up">
+                    {/* Service Badge & Star Rating 
+                    <div className="flex items-center justify-between text-[9.5px] sm:text-[10px] uppercase tracking-[0.22em] text-[#E8C8CC] mb-1.5">
+                      <div className="flex items-center gap-1.5">
+                        <Sparkles className="w-3 h-3 text-[var(--accent-rose)] animate-spin-slow" />
+                        <span
+                          key={`badge-${currentIndex}`}
+                          className="animate-fade-in font-medium"
+                        >
+                          Service {currentSlide.number} • Luxury Artistry
+                        </span>
+                      </div>
+                      <span className="flex items-center gap-1 text-[#C5A880] bg-white/5 px-2 py-0.5 rounded-full border border-white/10">
                         <Star className="w-3 h-3 fill-current" />
-                        <span>5.0</span>
+                        <span className="font-semibold tracking-normal">5.0</span>
                       </span>
                     </div>
 
-                    {/* Word-by-word animated title */}
-                    <p className="font-editorial text-base sm:text-lg text-[#FAF8F6] font-light flex flex-wrap min-h-[1.75rem] items-center">
+                    {/* Word-by-word animated title 
+                    <p className="font-editorial text-base sm:text-lg md:text-xl text-[#FAF8F6] font-light flex flex-wrap min-h-[1.75rem] items-center">
                       {currentSlide.title.split(" ").map((word, wIdx) => (
                         <span
                           key={`word-${currentIndex}-${word}-${wIdx}`}
                           className="inline-block mr-[0.28em] animate-word-reveal"
                           style={{
-                            animationDelay: `${wIdx * 100}ms`,
+                            animationDelay: `${wIdx * 90}ms`,
                             animationFillMode: "backwards",
                           }}
                         >
@@ -251,8 +262,22 @@ export default function Hero() {
                         </span>
                       ))}
                     </p>
+
+                    {/* Subtitle / Tagline Animation 
+                    {currentSlide.description && (
+                      <p
+                        key={`desc-${currentIndex}`}
+                        className="text-xs text-[var(--text-muted)] font-light mt-1 line-clamp-1 animate-fade-in"
+                        style={{
+                          animationDelay: "280ms",
+                          animationFillMode: "backwards",
+                        }}
+                      >
+                        {currentSlide.description}
+                      </p>
+                    )}
                   </div>
-                </div>
+                </div> */}
               </div>
 
               {/* Floating Secondary Image Badge */}
