@@ -81,7 +81,7 @@ export default function Navbar() {
               <img
                 src={isDark ? "/logo-white.png" : "/logo.png"}
                 alt={siteConfig.name}
-                className="h-14 sm:h-15 w-auto object-contain transition-opacity duration-300"
+                className="h-16 sm:h-18 lg:h-20 w-auto object-contain transition-transform duration-300 hover:scale-105"
               />
             </Link>
 
@@ -178,7 +178,7 @@ export default function Navbar() {
                 <img
                   src={isDark ? "/logo-white.png" : "/logo.png"}
                   alt={siteConfig.name}
-                  className="h-12 w-auto object-contain"
+                  className="h-14 sm:h-16 w-auto object-contain"
                 />
               </Link>
               <button
