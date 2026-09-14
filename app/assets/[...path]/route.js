@@ -17,9 +17,9 @@ export async function GET(request, { params }) {
     const resolvedParams = await params;
     const pathSegments = resolvedParams.path || [];
     
-    // Sanitize path segments to prevent directory traversal
+    // Sanitize path segments to prevent directory traversal and handle URL encoding
     const safeSegments = pathSegments.map((segment) =>
-      segment.replace(/(\.\.[\/\\])+/g, "").replace(/[\/\\]/g, "")
+      decodeURIComponent(segment).replace(/(\.\.[\/\\])+/g, "").replace(/[\/\\]/g, "")
     );
 
     const relativePath = safeSegments.join(path.sep);
